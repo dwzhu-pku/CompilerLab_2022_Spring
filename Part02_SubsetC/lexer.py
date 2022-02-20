@@ -1,30 +1,28 @@
 # --------------------------------------------
 # lexer.py
-# Example of using PLY to perform tokenization
+# Used to perform tokenization for SubsetC
 # --------------------------------------------
 
 from ply.lex import lex
-print("hello world")
 
 # All tokens must be named in advance.
-tokens = ( 'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'LPAREN', 'RPAREN',
-           'NAME', 'NUMBER' )
+tokens = ( 'identifier', 'number' )
 
 # Ignored characters
 t_ignore = ' \t'
 
+# Helper variables
+digit8 = r'[0-7]'
+digit10 = r'[0-9]'
+digit16 = r'[0-9A-Fa-f]'
+
 # Token matching rules are written as regexs
-t_PLUS = r'\+'
-t_MINUS = r'-'
-t_TIMES = r'\*'
-t_DIVIDE = r'/'
-t_LPAREN = r'\('
-t_RPAREN = r'\)'
-t_NAME = r'[a-zA-Z_][a-zA-Z0-9_]*'
+t_identifier = r'[a-zA-Z_][a-zA-Z0-9_]*'
 
 # A function can be used if there is an associated action.
 # Write the matching regex in the docstring.
-def t_NUMBER(t):
+def t_number(t):
+    # f'[1-9]{digit10}*'
     r'\d+'
     t.value = int(t.value)
     return t
@@ -33,7 +31,6 @@ def t_NUMBER(t):
 def t_newline(t):
     r'\n+'
     t.lexer.lineno += t.value.count('\n')
-
 
 # Error handler for illegal characters
 def t_error(t):

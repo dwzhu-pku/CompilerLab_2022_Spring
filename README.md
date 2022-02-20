@@ -51,15 +51,14 @@ PLY包的详细使用说明参见[以下链接](https://www.dabeaz.com/ply/ply.h
 下面给出简化C语言的完整语法，其中以大写字母开头的为非终结符，其它均为终结符。
 ```ebnf
 
-Function        ::= Type identifier (ArgList) CompoundStmt;
+Function        ::= Type identifier "(" ArgList ")" CompoundStmt
+                    | Type identifier "(" ")" CompoundStmt;
 ArgList         ::= Arg
-                    | ArgList, Arg
-                    | ; /* 可能为空 */
-
+                    | ArgList "," Arg;
 Arg             ::= Type identifier;
 Declaration     ::= Type IdentList;
-Type            ::= int;
-IdentList       ::= identifier, IdentList
+Type            ::= "int";
+IdentList       ::= identifier "," IdentList
                     | identifier;
 Stmt            ::= ForStmt
                     | WhileStmt
@@ -68,33 +67,35 @@ Stmt            ::= ForStmt
                     | CompoundStmt
                     | Declaration
                     | ; /* 可能为空 */
-ForStmt         ::= for ( Expr ; OptExpr ; OptExpr ) Stmt;
+ForStmt         ::= "for" "(" Expr ";" OptExpr ";" OptExpr ")" Stmt;
 OptExpr         ::= Expr
                     | ; /* 可能为空 */
-WhileStmt       ::= while ( Expr ) Stmt;
-IfStmt          ::= if ( Expr ) Stmt ElsePart;
-ElsePart        ::= else Stmt
+WhileStmt       ::= "while" "(" Expr ")" Stmt;
+IfStmt          ::= "if" "(" Expr ")" Stmt ElsePart;
+ElsePart        ::= "else" Stmt
                     : ; /* 可能为空 */
-CompoundStmt    ::= { StmtList };
+CompoundStmt    ::= "{" StmtList "}";
 StmtList        ::= StmtList Stmt
                     | ; /* 可能为空 */
-Expr            ::= identifier = Expr
+Expr            ::= identifier "=" Expr
                     | Rvalue;
 Rvalue          ::= Rvalue Compare Mag
                     | Mag;
-Compare         ::= == | < | > | <= | >= | !=;
-Mag             ::= Mag + Term 
-                    | Mag - Term
+Compare         ::= "==" | "<" | ">" | "<=" | ">=" | "!=";
+Mag             ::= Mag "+" Term 
+                    | Mag "-" Term
                     | Term;
-Term            ::= Term * Factor
-                    | Term / Factor
+Term            ::= Term "*" Factor
+                    | Term "/" Factor
                     | Factor;
-Factor          ::= ( Expr )
-                    | - Factor
-                    | + Factor
+Factor          ::= "(" Expr ")"
+                    | "-" Factor
+                    | "+" Factor
                     | identifier
                     | number;
 ```
+**相关说明**
+1. 数字可能是8进制（Oct）、10进制（Dec）、16进制（Hex）。其中8进制数以0开头，10进制数以1~9开头，16进制数以0x或0X开头。如：019(Oct) = 17(Dec) = 0x11(Hex)；-025(Oct) = -21(Dec) = -0x15(Hex)。
 ### 测试数据
 所有测试数据见当前目录下的`test_subsetc`文件夹。
 ### 评分标准
