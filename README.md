@@ -17,7 +17,7 @@ Python包PLY提供了对Lex和Yacc的纯Python实现。本次实习推荐使用3
 >
 > 2.解压此zip文件
 > 
-> 3.打开终端（即windows电脑的cmd/powershell，或mac电脑的terminal）进入文件夹ply-3.11中
+> 3.打开终端（即windows电脑的cmd/powershell，或mac电脑的terminal），进入文件夹ply-3.11中
 > 
 > 4.执行如下指令：python setup.py install
 > 
@@ -41,6 +41,64 @@ PLY包的详细使用说明参见[以下链接](https://www.dabeaz.com/ply/ply.h
 3. （80%）实现任意整数的加减乘除运算（不含括号）
 4. （90%）实现任意整数的加减乘除运算（含括号）
 5. （100%）实现任意整数的加减乘除及幂运算（含括号，幂运算用^算符表示）
-
+### Hints
+首先用PLY中的lex模块实现分词。其次写出符合四则运算法则的文法（注意运算符优先级的处理，比如乘除高于加减，幂运算高于乘除，括号最高）。然后利用PLY中的YACC模块实现语法分析，并在归约的同时计算结果或先建出AST树再计算结果等。
 ## Ⅲ） 实习2：简化的C语言编译器
+### 任务描述
+使用PLY构造一个简化的C语言编译器。只需要进行词法分析和语法分析，如果分析失败，则报出错误；如果分析成功，则给出源码中的符号列表和语句列表。  
+不需要支持数组、结构体、联合、文件、集合、switch语句、do while语句、位运算等操作。可能出现的数据类型只有int型。忽略源码中的空格、tab、换行符等空白符（whitespace）。
+### 文法描述
+下面给出简化C语言的完整语法，其中以大写字母开头的为非终结符，其它均为终结符。
+```ebnf
 
+Function        ::= Type identifier (ArgList) CompoundStmt;
+ArgList         ::= Arg
+                    | ArgList, Arg
+                    | ; /* 可能为空 */
+
+Arg             ::= Type identifier;
+Declaration     ::= Type IdentList;
+Type            ::= int;
+IdentList       ::= identifier, IdentList
+                    | identifier;
+Stmt            ::= ForStmt
+                    | WhileStmt
+                    | Expr
+                    | IfStmt
+                    | CompoundStmt
+                    | Declaration
+                    | ; /* 可能为空 */
+ForStmt         ::= for ( Expr ; OptExpr ; OptExpr ) Stmt;
+OptExpr         ::= Expr
+                    | ; /* 可能为空 */
+WhileStmt       ::= while ( Expr ) Stmt;
+IfStmt          ::= if ( Expr ) Stmt ElsePart;
+ElsePart        ::= else Stmt
+                    : ; /* 可能为空 */
+CompoundStmt    ::= { StmtList };
+StmtList        ::= StmtList Stmt
+                    | ; /* 可能为空 */
+Expr            ::= identifier = Expr
+                    | Rvalue;
+Rvalue          ::= Rvalue Compare Mag
+                    | Mag;
+Compare         ::= == | < | > | <= | >= | !=;
+Mag             ::= Mag + Term 
+                    | Mag - Term
+                    | Term;
+Term            ::= Term * Factor
+                    | Term / Factor
+                    | Factor;
+Factor          ::= ( Expr )
+                    | - Factor
+                    | + Factor
+                    | identifier
+                    | number;
+```
+### 测试数据
+所有测试数据见当前目录下的`test_subsetc`文件夹。
+### 评分标准
+1. （40%）考察在测试数据上的正确率（这一部分只考察是否会在语法正确的测试点上报错或将语法错误的测试点判定为正确）
+2. （30%）考察建出的抽象语法树（AST）的合理性。（实际评测时以`test_subsetc`文件夹`ast`开头的测试点为输入，人工分析其合理性）。
+3. （30%）提交一份实习报告。简述实验过程、遇到的困难及解决方案、实验感想、对课程的建议等。这一部分没有严格的要求，推荐页数是3~4页，不及或超出都可，不会影响评分。
+### Hints
