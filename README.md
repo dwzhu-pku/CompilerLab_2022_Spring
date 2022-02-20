@@ -73,7 +73,7 @@ OptExpr         ::= Expr
 WhileStmt       ::= "while" "(" Expr ")" Stmt;
 IfStmt          ::= "if" "(" Expr ")" Stmt ElsePart;
 ElsePart        ::= "else" Stmt
-                    : ; /* 可能为空 */
+                    | ; /* 可能为空 */
 CompoundStmt    ::= "{" StmtList "}";
 StmtList        ::= StmtList Stmt
                     | ; /* 可能为空 */
