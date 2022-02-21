@@ -62,21 +62,21 @@ IdentList       ::= identifier "," IdentList
                     | identifier;
 Stmt            ::= ForStmt
                     | WhileStmt
-                    | Expr
+                    | Expr ";"
                     | IfStmt
                     | CompoundStmt
                     | Declaration
-                    | ; /* 可能为空 */
-ForStmt         ::= "for" "(" Expr ";" OptExpr ";" OptExpr ")" Stmt;
+                    | ";" /* 空语句 */ ;
+ForStmt         ::= "for" "(" OptExpr ";" OptExpr ";" OptExpr ")" Stmt;
 OptExpr         ::= Expr
-                    | ; /* 可能为空 */
+                    | ε /* 可能为空 */ ;
 WhileStmt       ::= "while" "(" Expr ")" Stmt;
 IfStmt          ::= "if" "(" Expr ")" Stmt ElsePart;
 ElsePart        ::= "else" Stmt
-                    | ; /* 可能为空 */
+                    | ε /* 可能为空 */ ;
 CompoundStmt    ::= "{" StmtList "}";
 StmtList        ::= StmtList Stmt
-                    | ; /* 可能为空 */
+                    | ;
 Expr            ::= identifier "=" Expr
                     | Rvalue;
 Rvalue          ::= Rvalue Compare Mag
