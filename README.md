@@ -56,7 +56,7 @@ Function        ::= Type identifier "(" ArgList ")" CompoundStmt
 ArgList         ::= Arg
                     | ArgList "," Arg;
 Arg             ::= Type identifier;
-Declaration     ::= Type IdentList;
+Declaration     ::= Type IdentList ";" ;
 Type            ::= "int";
 IdentList       ::= identifier "," IdentList
                     | identifier;

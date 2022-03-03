@@ -3,12 +3,12 @@
 # Used for grammar parsing for SubsetC
 # --------------------------------------------
 
-from tkinter.messagebox import NO
 import ply.yacc as yacc
 import lexer
 import myast
 
 tokens = lexer.tokens
+VERBOSE = 0
 
 def p_function(p):
     '''
@@ -17,10 +17,12 @@ def p_function(p):
     '''
     if len(p) == 6:
         p[0] = myast.FunDef(p[1], p[2], list(), p[5].content_list)
-        print("Parsing function finished!")
+        if VERBOSE:
+            print("Parsing function finished!")
     elif len(p) == 7:
         p[0] = myast.FunDef(p[1], p[2], p[4].content_list, p[6].content_list)
-        print("Parsing function with arglist finished!")
+        if VERBOSE:
+            print("Parsing function with arglist finished!")
 
 def p_arglist(p):
     '''
@@ -30,19 +32,26 @@ def p_arglist(p):
     if len(p) == 2:
         p[0] = myast.ItemList()
         p[0].append_item(p[1])
-    elif len(p) == 3:
-        p[0] = p[1].append_item(p[3])
-    print("Parsing arglist")
+    elif len(p) == 4:
+        p[1].append_item(p[3])
+        p[0] = p[1]
+
+    if VERBOSE:
+        print("Parsing arglist")
 
 def p_arg(p):
     'Arg : Type IDENT'
     p[0] = myast.Arg(p[1], p[2])
-    print("Parsing arg")
+
+    if VERBOSE:
+        print("Parsing arg")
 
 def p_declaration(p):
-    'Declaration : Type IdentList'
+    'Declaration : Type IdentList SEMI'
     p[0] = myast.Decl(p[1], p[2].content_list)
-    print("Parsing Declaration")
+
+    if VERBOSE:
+        print("Parsing Declaration")
 
 
 def p_type(p):
@@ -50,7 +59,9 @@ def p_type(p):
     Type : INT
     '''
     p[0] = p[1]
-    print("Parsing Type")
+
+    if VERBOSE:
+        print("Parsing Type")
 
 
 def p_identlist(p):
@@ -62,8 +73,11 @@ def p_identlist(p):
         p[0] = myast.ItemList()
         p[0].append_item(p[1])
     elif len(p) == 4:
-        p[0] = p[1].append_item(p[3])
-    print("Parsing IdentList")
+        p[1].append_item(p[3])
+        p[0] = p[1]
+
+    if VERBOSE:
+        print("Parsing IdentList")
 
 
 def p_stmt(p):
@@ -76,9 +90,10 @@ def p_stmt(p):
          | Declaration
          | SEMI
     '''
-    p[0] = myast.ItemList()
-    p[0].append_item(p[1])
-    print("Parsing Stmt")
+    p[0] = p[1]
+
+    if VERBOSE:
+        print("Parsing Stmt")
 
 
 def p_forstmt(p):
@@ -86,7 +101,9 @@ def p_forstmt(p):
     ForStmt : FOR XKHZ OptExpr SEMI OptExpr SEMI OptExpr XKHY Stmt
     '''
     p[0] = myast.ForAst(p[3], p[5], p[7], p[9])
-    print("Parsing ForStmt")
+
+    if VERBOSE:
+        print("Parsing ForStmt")
 
 
 def p_optexpr(p):
@@ -98,7 +115,9 @@ def p_optexpr(p):
         p[0] = None
     elif len(p) == 2:
         p[0] = p[1]
-    print("Parsing OptExpr")
+
+    if VERBOSE:
+        print("Parsing OptExpr")
 
 
 def p_whilestmt(p):
@@ -106,7 +125,9 @@ def p_whilestmt(p):
     WhileStmt : WHILE XKHZ Expr XKHY Stmt
     '''
     p[0] = myast.WhileAst(p[3], p[5])
-    print("Parsing WhileStmt")
+
+    if VERBOSE:
+        print("Parsing WhileStmt")
 
 
 def p_ifstmt(p):
@@ -114,7 +135,9 @@ def p_ifstmt(p):
     IfStmt : IF XKHZ Expr XKHY Stmt ElsePart
     '''
     p[0] = myast.IfAst(p[3], p[5], p[6])
-    print("Parsing IfStmt")
+
+    if VERBOSE:
+        print("Parsing IfStmt")
 
 
 def p_elsepart(p):
@@ -126,7 +149,9 @@ def p_elsepart(p):
         p[0] = None
     elif len(p) == 3:
         p[0] = p[2]
-    print("Parsing ElsePart")
+
+    if VERBOSE:
+        print("Parsing ElsePart")
 
 
 def p_compoundstmt(p):
@@ -134,7 +159,9 @@ def p_compoundstmt(p):
     CompoundStmt : DKHZ StmtList DKHY
     '''
     p[0] = p[2]
-    print("Parsing CompoundStmt")
+
+    if VERBOSE:
+        print("Parsing CompoundStmt")
 
 
 def p_stmtlist(p):
@@ -145,9 +172,11 @@ def p_stmtlist(p):
     if len(p) == 1:
         p[0] = myast.ItemList()
     elif len(p) == 3:
-        print(p[0], p[1], p[2])
-        p[0] = p[1].append_item(p[2])
-    print("Parsing StmtList")
+        p[1].append_item(p[2])
+        p[0] = p[1]
+
+    if VERBOSE:
+        print("Parsing StmtList")
 
 
 def p_expr(p):
@@ -159,7 +188,9 @@ def p_expr(p):
         p[0] = p[1]
     elif len(p) == 4:
         p[0] = myast.ExprAst(p[1], p[2], p[3])
-    print("Parsing Expr")
+
+    if VERBOSE:
+        print("Parsing Expr")
 
 
 def p_rvalue(p):
@@ -171,7 +202,9 @@ def p_rvalue(p):
         p[0] = p[1]
     elif len(p) == 4:
         p[0] = myast.ExprAst(p[1], p[2], p[3])
-    print("Parsing Rvalue")
+
+    if VERBOSE:
+        print("Parsing Rvalue")
 
 
 def p_compare(p):
@@ -184,7 +217,9 @@ def p_compare(p):
             | NE
     '''
     p[0] = p[1]
-    print("Parsing Compare")
+
+    if VERBOSE:
+        print("Parsing Compare")
 
 
 def p_mag(p):
@@ -198,7 +233,8 @@ def p_mag(p):
     elif len(p) == 4:
         p[0] = myast.ExprAst(p[1], p[2], p[3])
 
-    print("Parsing Mag")
+    if VERBOSE:
+        print("Parsing Mag")
 
 
 def p_term(p):
@@ -211,7 +247,9 @@ def p_term(p):
         p[0] = p[1]
     elif len(p) == 4:
         p[0] = myast.ExprAst(p[1], p[2], p[3])
-    print("Parsing Term")
+
+    if VERBOSE:
+        print("Parsing Term")
 
 
 def p_factor(p):
@@ -228,7 +266,9 @@ def p_factor(p):
         p[0] = myast.ExprAst(None, p[1], p[2])
     elif len(p) == 4:
         p[0] = p[2]
-    print("Parsing Factor")
+
+    if VERBOSE:
+        print("Parsing Factor")
 
 
 # Error rule for syntax errors

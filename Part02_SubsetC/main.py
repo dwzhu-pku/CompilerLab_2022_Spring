@@ -1,6 +1,8 @@
 import myparser
+import os
 
-with open("../test_subsetc/basic_03_param_list", 'r', encoding="utf-8") as fin:
+testcase = os.listdir("../test_subsetc")
+with open("../test_subsetc/basic_04_var_list", 'r', encoding="utf-8") as fin:
     s = fin.read()
     result = myparser.cparser.parse(s)
     if result is not None:
