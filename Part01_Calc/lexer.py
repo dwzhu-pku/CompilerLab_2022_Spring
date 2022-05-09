@@ -4,7 +4,7 @@
 # --------------------------------------------
 
 from ply.lex import lex
-print("hello world")
+print("Package ply loaded successfully!")
 
 # All tokens must be named in advance.
 tokens = ( 'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'LPAREN', 'RPAREN',
@@ -46,9 +46,10 @@ lexer = lex()
 def test_function():
     # Test it out
     data = '''
-    3 +  4 * 10
+    3 +  4 * 10 \n
     + -20 *2
     '''
+    # data = input()
 
     lexer.input(data)
 
@@ -56,6 +57,6 @@ def test_function():
         tok = lexer.token()
         if not tok:
             break
-        print(tok)
+        print(tok )
 
 test_function()
